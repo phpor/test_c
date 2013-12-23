@@ -1,31 +1,27 @@
-
 #include "ipauth.h"
 
 static const char* config_file = "a.txt";
 
 int main(int ac, char **av) {
-	long *arr_ip1 = NULL;
-	long *arr_ip2 = NULL;
+	long *arr_ip = NULL;
 	int len = 0;
-	if (NULL == (arr_ip2 = parse_conf(config_file, arr_ip1, &len))) {
+	if (NULL == (arr_ip = parse_conf(config_file, &len))) {
 		printf("parse conf fail\n");
 		return 1;
 	}
-	long *ptr = arr_ip2;
+	long *ptr = arr_ip;
 	while(len--) {
 		printf("%ld\n", *(ptr++));
 	}
-	free(arr_ip1);
-	free(arr_ip2);
-	arr_ip1 = NULL;
-	arr_ip2 = NULL;
+	free(arr_ip);
+	arr_ip = NULL;
 	ptr = NULL;
 
 	return 0;
 }
 
 
-long * parse_conf(const char* config_file, long* arr_ip, int* len) {
+long * parse_conf(const char* config_file, int* len) {
 	FILE *fp_ip = fopen(config_file, "r");
 	if (fp_ip == NULL) {
 		fprintf(stderr, "open file %s fail\n", config_file);
@@ -42,7 +38,7 @@ long * parse_conf(const char* config_file, long* arr_ip, int* len) {
 	}
 	(*len) = rows;
 
-	arr_ip = (long *)malloc(rows * sizeof(long));
+	long *arr_ip = (long *)malloc(rows * sizeof(long));
 	long *ptr = arr_ip;
 	
 	fseek(fp_ip, 0L, SEEK_SET);
