@@ -1,26 +1,5 @@
 #include "ipauth.h"
 
-static const char* config_file = "a.txt";
-
-int main(int ac, char **av) {
-	long *arr_ip = NULL;
-	int len = 0;
-	if (NULL == (arr_ip = parse_conf(config_file, &len))) {
-		printf("parse conf fail\n");
-		return 1;
-	}
-	long *ptr = arr_ip;
-	while(len--) {
-		printf("%ld\n", *(ptr++));
-	}
-	free(arr_ip);
-	arr_ip = NULL;
-	ptr = NULL;
-
-	return 0;
-}
-
-
 long * parse_conf(const char* config_file, int* len) {
 	FILE *fp_ip = fopen(config_file, "r");
 	if (fp_ip == NULL) {
@@ -78,3 +57,22 @@ long ip2long(char *addr, int addr_len) {
 #endif
 }
 
+char *long2ip(unsigned long ip) {
+        /* "It's a long but it's not, PHP ints are signed */
+        struct in_addr myaddr;
+#ifdef HAVE_INET_PTON
+        char str[40];
+#endif
+
+        myaddr.s_addr = htonl(ip);
+#ifdef HAVE_INET_PTON
+        if (inet_ntop(AF_INET, &myaddr, str, sizeof(str))) {
+                return str;
+        } else {
+                return NULL;
+        }
+#else
+        return inet_ntoa(myaddr);
+#endif
+
+}

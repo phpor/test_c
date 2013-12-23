@@ -11,25 +11,6 @@
 # include <arpa/inet.h>
 #endif
 
-char *_long2ip(unsigned long ip) {
-	/* "It's a long but it's not, PHP ints are signed */
-	struct in_addr myaddr;
-#ifdef HAVE_INET_PTON
-	char str[40];
-#endif
-
-	myaddr.s_addr = htonl(ip);
-#ifdef HAVE_INET_PTON
-	if (inet_ntop(AF_INET, &myaddr, str, sizeof(str))) {
-		return str;
-	} else {
-		return NULL;
-	}
-#else
-	return inet_ntoa(myaddr);
-#endif
-
-}
 //--------------------------------------------------------------------- 
 unsigned long ip2long(const char* ip){ 
 	unsigned char a, b, c, d; 
@@ -38,7 +19,7 @@ unsigned long ip2long(const char* ip){
 } 
 
 //--------------------------------------------------------------------- 
-void long2ip(unsigned long ip, char buf[]){ 
+char *long2ip(unsigned long ip, char buf[]){ 
 	int i = 0; 
 	unsigned long tmp[4] = {0}; 
 
@@ -47,6 +28,7 @@ void long2ip(unsigned long ip, char buf[]){
 		ip = ip >> 8; 
 	} 
 	sprintf(buf, "%lu.%lu.%lu.%lu", tmp[3], tmp[2], tmp[1], tmp[0]); 
+	return buf;
 } 
 
 //--------------------------------------------------------------------- 
@@ -58,7 +40,7 @@ int main(){
 	ip_long = ip2long(ip); 
 	printf("%lu\n", ip_long); 
 
-	printf("%s", _long2ip((unsigned long )ip_long)); 
+	printf("%s", long2ip((unsigned long )ip_long, buf)); 
 	puts(buf); 
 
 	return 0; 
