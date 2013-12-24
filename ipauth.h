@@ -15,3 +15,7 @@
 long *parse_conf(const char* config_file, int* len);
 long ip2long(char *addr, int addr_len);
 char *long2ip(unsigned long ip);
+
+/**
+ * 这里有哪些东西是应该直接放在对应的 .c 文件中的？
+ */
