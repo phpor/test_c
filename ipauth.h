@@ -17,5 +17,6 @@ long ip2long(char *addr, int addr_len);
 char *long2ip(unsigned long ip);
 
 /**
- * 这里有哪些东西是应该直接放在对应的 .c 文件中的？
+ * 1. 这里有哪些东西是应该直接放在对应的 .c 文件中的？
+ * 2. 程序中一旦出现类似 HAVE_ARPA_INET_H 的写法，一般应该有configure、Makefile
  */
