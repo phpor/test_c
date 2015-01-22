@@ -1,7 +1,7 @@
 #include<stdint.h>
 #include<stdlib.h>
 
-// 注意这里对大端和小端的判断方法
+// 注意这里对大端和小端的判断方法,参考资料： http://stackoverflow.com/questions/2437283/c-c-packing-signed-char-into-int
 uint32_t pack_uint32(char* data) {
     uint16_t num = 0x0102;
     char c2[2] = {0x01, 0x02};
@@ -13,3 +13,5 @@ uint32_t pack_uint32(char* data) {
 
     return *(uint32_t*)c4;
 }
+
+
