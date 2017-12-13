@@ -72,8 +72,7 @@ int main(int ac, char **av)
 	FD_ZERO(&set); /* clear the set */
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	while (1) {
-/*
-		FD_SET(fd, &set); // add our file descriptor to the set
+		FD_SET(fd, &set); /* add our file descriptor to the set */
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 		ret = select(fd + 1, &set, NULL, NULL, &timeout);
@@ -82,22 +81,15 @@ int main(int ac, char **av)
 			break;
 		}
 		if (ret == 0 ) continue;
-*/
-		while(1) {
-				nread = read(fd, buffer, sizeof(buffer));
-				if (nread > 0) write(1, buffer, nread);
-				if (nread < 0 && errno == EAGAIN || nread > 0 && nread < sizeof(buffer)) sleep(1);
-				if (nread < 0 && errno != EAGAIN ) break;
+		while(nread = read(fd, buffer, sizeof(buffer)) > 0) {
+			write(1, buffer, nread);
 		}
-/*
 		if (nread < 0) {
 			perror(strerror(errno));
 			continue;
 		}
-*/
 		//printf("Read %d bytes from tun/tap device\n", nread);
 	}
 	close(fd);
 	return 0;
 }
-//vim: se ts=4
