@@ -16,10 +16,11 @@ typedef struct Member{
 	char* parent;
 }Member;
 
-Node* find(Node* node, Data* data );
+Node* find(Node* node, Data* data, Node* skip);
 int equal(char* str1, char* str2);
 Tree init();
 void printTree(Tree t);
+char* strnew(char* str);
 
 int main(int ac, char** av) {
 	Tree t = init();
@@ -29,7 +30,7 @@ int main(int ac, char** av) {
 
 void printTree(Tree t) {
 	if (t == NULL) return;
-	printf("name: %s\n", t->data->name);
+	printf("name: %20s\n", t->data->name);
 	printTree(t->child);
 	printTree(t->right);
 }
@@ -50,14 +51,18 @@ Tree init() {
 	int i = 0;
 	Member m;
 	Tree t;
+	printf("Begin construct tree\n");
 	for (i = 0; i < 10; i++) {
 		m = members[i];
+		printf("%2d: %s => %s\n", i, m.name, m.parent);
+		fflush(NULL);
+
+		int len;
 		Node* parent;
 		Node* n = (Node *)malloc(sizeof(Node));
 		Data* data = (Data *)malloc(sizeof(Data));
 		data->age = 0;
-		data->name = (char*) malloc(strlen(m.name)+1);
-		strcpy(data->name, m.name);
+		data->name = strnew(m.name);
 		n->data = data;
 		if (equal(m.parent, "")) {
 			t = n;
@@ -66,9 +71,16 @@ Tree init() {
 
 		Data* parentData = (Data *)malloc(sizeof(Data));
 		parentData->age = 0;
-		parentData->name = (char*) malloc(strlen(m.parent)+1);
-		strcpy(parentData->name, m.parent);
-		parent = find(t, parentData);
+		parentData->name = strnew(m.parent);
+		parent = find(t, parentData, NULL);
+		free(parentData->name);
+		free(parentData);
+
+		if (parent == NULL) {
+			printf("can not find: %s->%s (skiped)\n", m.name, m.parent);
+			continue;
+		}
+
 		Node* node;
 		node = parent->child;
 		if (node == NULL) {
@@ -90,15 +102,25 @@ int equal(char* str1, char* str2) {
 	return 0==strcmp(str1, str2)?1:0;
 }
 
-Node* find(Node* node, Data* data ){
+char* strnew(char* str) {
+	int len;
+	len = strlen(str);
+	char *new = (char*)malloc(len+1);
+	strcpy(new, str);
+	new[len] = '\0';
+	return new;
+}
+
+Node* find(Node* node, Data* data, Node* skip ){
 	if(node ==NULL) return NULL;
 	if(0==strcmp(node->data->name,data->name)) return node;
 	Node* n;
 	Node* pN[4] = {node->parent, node->left, node->right, node->child};
 	int i;
 	for(i=0; i<4; i++) {
+		if (pN[i] ==  skip) continue;
 		if(pN[i]!=NULL) {
-			if(NULL != (n=find(pN[i],data))) return n;
+			if(NULL != (n=find(pN[i], data, node))) return n;
 		}
 	}
 	return NULL;
